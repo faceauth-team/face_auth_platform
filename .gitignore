@@ -1,0 +1,111 @@
+# ==========================================================================
+#  FaceAuth EMR — .gitignore
+#  Goal: never leak secrets, credentials, biometric data, or model weights.
+#  Rule of thumb: commit CODE and TEMPLATES only. Anything with a real secret,
+#  real key, real data, or a large binary stays local.
+# ==========================================================================
+
+# ---------- Secrets & environment ----------
+.env
+.env.*
+# the no-secrets template IS committed (negation must come after .env.*)
+!.env.example
+*.local
+secrets/
+secret*
+*secret*
+*credential*
+*.credentials
+config.local.*
+
+# ---------- Keys & certificates ----------
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+*.ppk
+*.gpg
+*.asc
+
+# ---------- Auth tokens / JWT signing material ----------
+*.jwk
+jwks_private*
+private_key*
+keys/
+
+# ---------- Biometric / clinical data (never commit) ----------
+data/
+uploads/
+captures/
+*.db
+*.sqlite
+*.sqlite3
+*.index
+*.pkl
+*.npy
+*.npz
+
+# ---------- Model weights (fetched per-machine, see models/README.md) ----------
+models/
+*.onnx
+*.pth
+*.pt
+*.pb
+*.h5
+*.tflite
+*.weights
+*.caffemodel
+*.bin
+
+# ---------- Local run docs that contain dev passwords ----------
+docs/HOW_TO_RUN.md
+
+# ---------- Python ----------
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---------- Node / JS ----------
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ---------- Logs & test artifacts ----------
+*.log
+logs/
+# local load/security test outputs (may contain captured data)
+tests/_*
+*_results.json
+*_progress.log
+
+# ---------- Office / editor temp & lock files ----------
+# Word/Excel/PowerPoint lock files (e.g. ~$Plan.docx)
+~$*
+*.tmp
+~WRL*.tmp
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# ---------- OS cruft ----------
+.DS_Store
+Thumbs.db
+desktop.ini
