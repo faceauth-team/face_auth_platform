@@ -6,7 +6,7 @@ identity by face** before sensitive clinical actions are committed — a
 biometric step-up that is faster than passwords and harder to share or
 spoof.
 
-> 🚧 **Status: in active development.** This repository is being built out
+>  **Status: in active development.** This repository is being built out
 > incrementally. The sections below describe what the platform is and what
 > we are building toward, not a finished product.
 
@@ -16,8 +16,7 @@ In an EMR, critical record changes (diagnosis, prescription, plan of
 management) need to be reliably attributed to the clinician who made them.
 Passwords and shared logins are weak: they get shared, reused, and
 shoulder-surfed. We want a **fast, hard-to-repudiate identity check** at the
-moment of action, with biometric data handled responsibly under DPDP /
-GDPR.
+moment of action, with biometric data handled responsibly under DPDP.
 
 ## What we're building
 
