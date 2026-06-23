@@ -1,13 +1,14 @@
-# 📋 Project Plan — Face Authentication Platform
+# Project Plan - Face Authentication Platform
 
-A simple, shared playbook so all three of us build the same way.
-Read this first before you start. No prior big-project experience needed.
+This is our shared plan so all of us build the project the same way.
+Please read this first before starting. You don't need big project
+experience, everything is explained simply here.
 
 ---
 
-## 1. What we are building (in one picture)
+## 1. What we are building
 
-A service that recognizes a clinician by their **face** before they change a
+A service that recognizes a clinician by their face before they change a
 medical record.
 
 ```
@@ -18,12 +19,12 @@ medical record.
         look              recognize + check live          allow change
 ```
 
-Two screens use it:
+There are two screens that use it:
 
 ```
   IT CONSOLE                         CLINICIAN LOGIN
-  (enroll a face)                    (verify a face)
-  run by IT staff                    run at point of care
+  (register a face)                  (verify a face)
+  used by IT staff                   used by doctors
         │                                   │
         └──────────────┬────────────────────┘
                        ▼
@@ -32,7 +33,7 @@ Two screens use it:
 
 ---
 
-## 2. How the pieces fit (architecture)
+## 2. How the pieces fit together
 
 ```
                          ┌──────────────────────────────┐
@@ -45,12 +46,12 @@ Two screens use it:
                 ┌─────────────────────────────────────────────┐
                 │                  BACKEND (app/)               │
                 │                                               │
-                │   api/   ── the web endpoints (/enroll …)     │
-                │   auth/  ── who is allowed (tokens)           │
-                │   ml/    ── the face brain (recognize + live) │
-                │   db/    ── where data is saved               │
-                │   core/  ── settings, logging, errors         │
-                │   workers/ ── background jobs                 │
+                │   api/   the web endpoints (/enroll etc.)     │
+                │   auth/  who is allowed (tokens)              │
+                │   ml/    the face brain (recognize + live)    │
+                │   db/    where data is saved                  │
+                │   core/  settings, logging, errors            │
+                │   workers/ background jobs                    │
                 └───────────────┬───────────────┬───────────────┘
                                 │               │
                                 ▼               ▼
@@ -60,8 +61,8 @@ Two screens use it:
                          └────────────┘   └──────────────┘
 ```
 
-> **Model weights are NOT in git.** They are large files everyone downloads
-> once on their own machine (see `models/README.md`).
+Note: the model weights are big files, so we do NOT put them in git.
+Everyone downloads them once on their own machine. See models/README.md.
 
 ---
 
@@ -70,55 +71,45 @@ Two screens use it:
 ```
 face-auth-platform/
 │
-├── README.md            ← project intro
-├── PLAN.md              ← this file
-├── requirements.txt     ← Python libraries we need
-├── .env.example         ← settings template (copy to .env, no secrets in git)
-├── Dockerfile           ← how to package the app
+├── README.md            project intro
+├── PLAN.md              this file
+├── requirements.txt     python libraries we need
+├── .env.example         settings template (copy to .env)
+├── Dockerfile           how to package the app
 │
-├── app/                 ← THE BACKEND (all Python code)
-│   ├── core/            ← settings, logging, errors  (foundation)
-│   ├── db/              ← database tables + connection
-│   ├── ml/              ← face recognition + liveness (the "brain")
-│   ├── auth/            ← tokens, permissions
-│   ├── api/             ← the REST endpoints
-│   └── workers/         ← background jobs
+├── app/                 THE BACKEND (all python code)
+│   ├── core/            settings, logging, errors  (the base)
+│   ├── db/              database tables + connection
+│   ├── ml/              face recognition + liveness (the brain)
+│   ├── auth/            tokens, permissions
+│   ├── api/             the REST endpoints
+│   └── workers/         background jobs
 │
-├── alembic/             ← database version history (migrations)
-├── db/                  ← raw SQL schema
-├── sdk/                 ← client libraries + the two HTML screens
-│   ├── python/          ← Python client
-│   ├── js/              ← JavaScript client
-│   └── demo/            ← enroll-console.html, auth-kiosk.html
+├── alembic/             database version history (migrations)
+├── db/                  raw SQL schema
+├── sdk/                 client libraries + the two HTML screens
+│   ├── python/          python client
+│   ├── js/              javascript client
+│   └── demo/            enroll-console.html, auth-kiosk.html
 │
-├── tests/               ← automated tests
-├── infra/               ← docker-compose (run everything together)
-├── .github/             ← CI (auto-checks on every push)
-└── models/              ← downloaded weights (IGNORED by git)
+├── tests/               automated tests
+├── infra/               docker-compose (run everything together)
+├── .github/             CI (auto checks on every push)
+└── models/              downloaded weights (git ignores this)
 ```
 
-**Golden rule:** one person works in one folder at a time, so we never edit
-the same file and collide.
+One simple habit that saves us a lot of pain: try to work in one folder at
+a time, so two people are not editing the same file together.
 
 ---
 
-## 4. Who builds what (no overlap = no conflicts)
+## 4. Build order (we build in small steps)
 
-| Person       | Owns these folders            |
-|--------------|-------------------------------|
-| **Satyam**   | `app/db/`, `app/api/`, `app/auth/` |
-| **Member B** | `app/ml/`                     |
-| **Member C** | `sdk/`, `tests/`, `docs/`, `.github/` |
-
----
-
-## 5. Build order (slices) — each one is a Pull Request
-
-We build in small steps. Each step = one branch → one Pull Request → merge.
-Later steps need earlier ones, so follow the order.
+We build the project step by step. Each step is one branch, then one Pull
+Request, then merge. Some steps need the earlier ones, so follow the order.
 
 ```
- 1. chore/scaffold              ✅ deps + settings + core      [DONE]
+ 1. chore/scaffold              deps + settings + core      [DONE]
  2. feature/data-layer          db tables + migrations
  3. feature/api-skeleton        FastAPI app + /healthz + auth
  4. feature/ml-pipeline         face detect + embed + search
@@ -133,89 +124,96 @@ Later steps need earlier ones, so follow the order.
 13. chore/ci-and-infra          CI + docker-compose
 ```
 
-**Can start in parallel right now:** #2 (Satyam), #4 (Member B), #11/docs (Member C)
-— they live in different folders.
+Steps 2, 4 and 11 live in different folders, so they can be done at the
+same time without clashing.
 
 ---
 
-## 6. The git workflow (memorize this loop)
+## 5. How we use git (this is the important part)
 
-We NEVER push code straight to `main`. `main` is protected.
-Everyone works on their own branch, then opens a Pull Request.
+We never push code straight to main. The main branch is protected, so every
+change has to go through a Pull Request and get 1 approval first.
+
+Each of us works on our own branch like this:
 
 ```
-        main  (protected — needs a Pull Request + 1 approval)
+        main  (protected, needs a Pull Request + 1 approval)
           │
           │  1. start fresh
           ▼
    git checkout main
-   git pull origin main          ← get everyone's latest work
+   git pull origin main          get everyone's latest work
           │
-          │  2. make your branch
+          │  2. make your own branch
           ▼
    git checkout -b feature/my-task
           │
-          │  3. do work, then save
+          │  3. do the work, then save it
           ▼
    git add .
-   git commit -m "feat: explain what you did"
+   git commit -m "feat: say what you did"
           │
           │  4. upload your branch
           ▼
    git push -u origin feature/my-task
           │
-          │  5. on GitHub: open Pull Request → teammate approves → Merge
+          │  5. on GitHub: open Pull Request, teammate approves, then Merge
           ▼
-   (changes are now in main — everyone runs `git pull origin main`)
+   now it is in main, everyone runs `git pull origin main`
 ```
 
-### Branch name pattern
+How to name a branch:
+
 ```
 <type>/<short-description>
    │            │
-   │            └── lowercase, words-joined-by-hyphens
+   │            └── lowercase, words joined by hyphens
    └── feature | fix | chore | docs
 ```
-Examples: `feature/enrollment`, `fix/camera-bug`, `docs/setup-guide`
 
-### Commit message pattern
+Examples: feature/enrollment, fix/camera-bug, docs/setup-guide
+
+How to write a commit message:
+
 ```
-<type>: <what you did, present tense>
+<type>: <what you did>
 ```
-Examples: `feat: add /enroll endpoint`, `fix: handle empty frames`
+
+Examples: feat: add /enroll endpoint, fix: handle empty frames
 
 ---
 
-## 7. First-time setup (each person, once)
+## 6. First time setup (each person, only once)
 
 ```bash
 # 1. get the project
 git clone https://github.com/faceauth-team/face_auth_platform.git
 cd face_auth_platform
 
-# 2. create a Python environment + install libraries
+# 2. make a python environment and install the libraries
 python -m venv .venv
-.venv\Scripts\activate          # Windows
+.venv\Scripts\activate          # windows
 pip install -r requirements.txt
 
-# 3. download the model weights (one time) — see models/README.md
+# 3. download the model weights (one time). see models/README.md
 
 # 4. copy the settings template
-copy .env.example .env          # Windows  (cp on Mac/Linux)
+copy .env.example .env          # windows  (use cp on mac/linux)
 ```
 
 ---
 
-## 8. Golden rules (keep us out of trouble)
+## 7. Few simple rules to keep us safe
 
-1. ✅ Always branch off an up-to-date `main` (`git pull` first).
-2. ✅ One folder per person — avoid editing the same files.
-3. ✅ Small Pull Requests — easier to review.
-4. ✅ Never commit secrets, `.env`, data, or model weights (`.gitignore` guards this).
-5. ✅ Get 1 approval before merging.
-6. ❌ Never `git push --force` to `main`.
+1. Always pull main before making a new branch.
+2. Try to stay in one folder so we don't edit the same files.
+3. Keep Pull Requests small, they are easier to review.
+4. Never commit secrets, .env, data, or model weights. The .gitignore
+   already blocks these, but be careful.
+5. Get 1 approval before merging.
+6. Never force push to main.
 
 ---
 
-*Questions? Ask in the team chat before pushing. When in doubt, make a branch —
-branches are cheap and safe.*
+If something is confusing, just ask in our group before pushing. When in
+doubt, make a branch. Branches are cheap and safe.
