@@ -73,7 +73,3 @@ is provided via a `.env` file (a no-secrets `.env.example` template will be
 committed); real secrets, keys, and model weights stay out of the repo by
 design.
 
-## Team
-
-Built by a three-person team. Contributions go through feature branches and
-pull requests into `main`.
