@@ -1,19 +1,22 @@
 """
 Face detection, landmarking, and alignment.
 
-Spec mapping (Section 6, "Face Detection" row): the spec calls for
-RetinaFace (InsightFace). RetinaFace's published weights are distributed
-as a GitHub Release asset, which is not fetchable from a locked-down
-build/CI environment without artifact-registry access. We use Google's
-MediaPipe BlazeFace + FaceMesh here instead — also Apache-2.0, open
-source, and (unlike RetinaFace's release asset) its model weights ship
-*inside* the pip wheel, so detection works fully offline, no model
-download step required. Swap back to RetinaFace by implementing the same
-`FaceDetector` interface once your build environment can pull the weights.
+We use Google's MediaPipe (BlazeFace for detection + FaceMesh for
+landmarks) here. The more common choice for this kind of work is
+RetinaFace, and honestly it's a great detector, but it has one practical
+problem for us: its weights live as a separate download, and our build
+and CI machines can't always reach out to grab files like that. MediaPipe
+ships its weights inside the pip package, so once you've pip-installed it,
+detection just works, fully offline, with nothing extra to fetch. It's
+also Apache-2.0, so licensing is a non-issue.
 
-Output contract matches what the rest of the pipeline expects regardless
-of backend: a bounding box, a quality-relevant set of landmarks, and a
-112x112 aligned crop.
+If we ever move to an environment where pulling RetinaFace's weights is
+easy, swapping it in is straightforward: implement the same FaceDetector
+interface and return the same FaceObservation, and nothing else in the
+pipeline has to change.
+
+Whatever detector sits behind it, the output stays the same: a bounding
+box, the landmarks, and a 112x112 aligned face crop.
 """
 from __future__ import annotations
 
